@@ -32,9 +32,11 @@ const deleteItem = (req, res) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
         return res.status(NOT_FOUND).send({ message: err.message });
-      } else if (err.name === "CastError") {
+      }
+      if (err.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
-      } else if (err.name === "ValidationError") {
+      }
+      if (err.name === "ValidationError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
       }
       return res.status(DEFAULT_ERROR).send({ message: err.message });
@@ -54,9 +56,11 @@ const likeItem = (req, res) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
         return res.status(NOT_FOUND).send({ message: err.message });
-      } else if (err.name === "CastError") {
+      }
+      if (err.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
-      } else if (err.name === "ValidationError") {
+      }
+      if (err.name === "ValidationError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
       }
       return res.status(DEFAULT_ERROR).send({ message: err.message });
@@ -76,9 +80,11 @@ const unlikeItem = (req, res) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
         return res.status(NOT_FOUND).send({ message: err.message });
-      } else if (err.name === "CastError") {
+      }
+      if (err.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
-      } else if (err.name === "ValidationError") {
+      }
+      if (err.name === "ValidationError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
       }
       return res.status(DEFAULT_ERROR).send({ message: err.message });
