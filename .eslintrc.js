@@ -3,7 +3,7 @@ module.exports = {
     es2021: true,
     node: true,
   },
-  extends: ["eslint:reccommend", "airbnb-base", "prettier"],
+  extends: ["eslint:recommended", "airbnb-base", "prettier"],
   overrides: [
     {
       env: {
@@ -20,6 +20,6 @@ module.exports = {
     sourceType: "module",
   },
   rules: {
-    /*eslint no-underscore-dangle: off*/
+    "no-underscore-dangle": "off",
   },
 };

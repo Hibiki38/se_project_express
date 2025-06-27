@@ -1,7 +1,7 @@
 const ClothingItem = require("../models/clothingItem");
 const { DEFAULT_ERROR, BAD_REQUEST, NOT_FOUND } = require("../utils/errors");
 
-const getItem = (req, res) => {
+const getItems = (req, res) => {
   ClothingItem.find({})
     .then((items) => res.status(200).send(items))
     .catch((err) => {
@@ -85,4 +85,4 @@ const unlikeItem = (req, res) => {
     });
 };
 
-module.exports = { getItem, createItem, deleteItem, likeItem, unlikeItem };
+module.exports = { getItems, createItem, deleteItem, likeItem, unlikeItem };
