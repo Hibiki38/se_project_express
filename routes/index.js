@@ -4,8 +4,8 @@ const itemRouter = require("./clothingItem");
 
 router.use("/users", userRouter);
 router.use("/items", itemRouter);
-router.use((req, res) => {
-  return res.status(404).send({ message: "Requested resource not found" });
-});
+router.use((req, res) =>
+  res.status(404).send({ message: "Requested resource not found" })
+);
 
 module.exports = router;
