@@ -1,6 +1,6 @@
 # WTWR (What to Wear?): Back End
 
-This is the back end part of the WTWR project, using MongoDB, Postman, mongoose, node.js. I created the routes and there controllers, handled possible errors that might occur in case of any problems with there corresponding error codes and messages. In the near future I will be connecting the front-end and back-end together to have a fullstack application.
+This is the back end part of the WTWR project, using MongoDB, Postman, mongoose, express.js. I created an API, the routes and there controllers, handled possible errors that might occur in case of any problems, with there corresponding error codes and messages. In the near future I will be implementing use authorization and authentication then connect the front-end and back-end together to have a fullstack application.
 
 ## Running the Project
 
