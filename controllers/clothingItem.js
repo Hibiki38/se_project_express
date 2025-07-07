@@ -1,5 +1,10 @@
 const ClothingItem = require("../models/clothingItem");
-const { DEFAULT_ERROR, BAD_REQUEST, NOT_FOUND } = require("../utils/errors");
+const {
+  DEFAULT_ERROR,
+  BAD_REQUEST,
+  NOT_FOUND,
+  NO_PERMISSION,
+} = require("../utils/errors");
 
 const getItems = (req, res) => {
   ClothingItem.find({})
@@ -29,7 +34,15 @@ const createItem = (req, res) => {
 
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
-  ClothingItem.findByIdAndDelete(itemId)
+  ClothingItem.findById(itemId)
+    .then((item) => {
+      if (item.owner.toString() !== req.user._id.toString()) {
+        return res
+          .status(NO_PERMISSION)
+          .send({ message: "You can only delete your own items" });
+      }
+      return ClothingItem.findByIdAndDelete(itemId);
+    })
     .orFail()
     .then((item) => res.status(200).send(item))
     .catch((err) => {
@@ -68,7 +81,7 @@ const likeItem = (req, res) => {
           .send({ message: "Requested resource not found" });
       }
       if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: "Invaild data" });
+        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
       if (err.name === "ValidationError") {
         return res.status(BAD_REQUEST).send({ message: "Invalid data" });
