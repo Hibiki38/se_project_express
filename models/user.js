@@ -45,11 +45,13 @@ userSchema.pre("save", function (next) {
       .hash(this.password, saltRounds)
       .then((hash) => {
         this.password = hash;
-        next();
+        return next();
       })
       .catch((err) => {
-        next(err);
+        return next(err);
       });
+  } else {
+    next();
   }
 });
 

@@ -24,7 +24,11 @@ const getUsers = (req, res) => {
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
   User.create({ name, avatar, email, password })
-    .then((user) => res.status(201).send(user))
+    .then((user) => {
+      const userObj = user.toObject();
+      delete userObj.password;
+      res.status(201).send(userObj);
+    })
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
@@ -43,7 +47,11 @@ const getCurrentUser = (req, res) => {
   const { userId } = req.user;
   User.findById(userId)
     .orFail()
-    .then((user) => res.status(200).send(user))
+    .then((user) => {
+      const userObj = user.toObject();
+      delete userObj.password;
+      res.status(200).send(userObj);
+    })
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
@@ -65,17 +73,23 @@ const getCurrentUser = (req, res) => {
 
 const userLogin = (req, res) => {
   const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+  }
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
+      res.cookie("jwt", token);
       return res.send({ token });
     })
     .catch((err) => {
       console.error(err);
-      if (err.name === "CredentialsNotFoundError") {
-        return res.status(UNAUTHORIZED).send({ message: "Not Authorized" });
+      if (err.message === "Incorrect email or password") {
+        return res
+          .status(UNAUTHORIZED)
+          .send({ message: "Incorrect email or password" });
       }
       return res
         .status(DEFAULT_ERROR)
@@ -91,7 +105,11 @@ const updateProfile = (req, res) => {
     { new: true, runValidators: true }
   )
     .orFail()
-    .then((user) => res.status(200).send(user))
+    .then((user) => {
+      const userObj = user.toObject();
+      delete userObj.password;
+      res.status(200).send(userObj);
+    })
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {

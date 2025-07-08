@@ -1,4 +1,5 @@
 const ClothingItem = require("../models/clothingItem");
+const mongoose = require("mongoose");
 const {
   DEFAULT_ERROR,
   BAD_REQUEST,
@@ -19,7 +20,7 @@ const getItems = (req, res) => {
 
 const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
-  ClothingItem.create({ name, weather, imageUrl, owner: req.user._id })
+  ClothingItem.create({ name, weather, imageUrl, owner: req.user.userId })
     .then((item) => res.status(201).send(item))
     .catch((err) => {
       console.error(err);
@@ -34,16 +35,17 @@ const createItem = (req, res) => {
 
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(itemId)) {
+    return res.status(BAD_REQUEST).send({ message: "Invalid item ID" });
+  }
   ClothingItem.findById(itemId)
+    .orFail()
     .then((item) => {
-      if (item.owner.toString() !== req.user._id.toString()) {
-        return res
-          .status(NO_PERMISSION)
-          .send({ message: "You can only delete your own items" });
+      if (item.owner.toString() !== req.user.userId.toString()) {
+        throw new Error("Permission denied");
       }
       return ClothingItem.findByIdAndDelete(itemId);
     })
-    .orFail()
     .then((item) => res.status(200).send(item))
     .catch((err) => {
       console.error(err);
@@ -58,6 +60,9 @@ const deleteItem = (req, res) => {
       if (err.name === "ValidationError") {
         return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
+      if (err.message === "Permission denied") {
+        return res.status(NO_PERMISSION).send({ message: "Permission denied" });
+      }
       return res
         .status(DEFAULT_ERROR)
         .send({ message: "An error has occurred on the server" });
@@ -66,9 +71,12 @@ const deleteItem = (req, res) => {
 
 const likeItem = (req, res) => {
   const { itemId } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(itemId)) {
+    return res.status(BAD_REQUEST).send({ message: "Invalid item ID" });
+  }
   ClothingItem.findByIdAndUpdate(
     itemId,
-    { $addToSet: { likes: req.user._id } },
+    { $addToSet: { likes: req.user.userId } },
     { new: true }
   )
     .orFail()
@@ -94,9 +102,12 @@ const likeItem = (req, res) => {
 
 const unlikeItem = (req, res) => {
   const { itemId } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(itemId)) {
+    return res.status(BAD_REQUEST).send({ message: "Invalid item ID" });
+  }
   ClothingItem.findByIdAndUpdate(
     itemId,
-    { $pull: { likes: req.user._id } },
+    { $pull: { likes: req.user.userId } },
     { new: true }
   )
     .orFail()
