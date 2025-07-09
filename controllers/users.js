@@ -1,5 +1,5 @@
-const User = require("../models/user");
 const jwt = require("jsonwebtoken");
+const User = require("../models/user");
 const { JWT_SECRET } = require("../utils/config");
 
 const {
@@ -12,7 +12,9 @@ const {
 
 const getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.status(200).send(users))
+    .then((users) => {
+      return res.status(200).send(users);
+    })
     .catch((err) => {
       console.error(err);
       return res
@@ -27,7 +29,7 @@ const createUser = (req, res) => {
     .then((user) => {
       const userObj = user.toObject();
       delete userObj.password;
-      res.status(201).send(userObj);
+      return res.status(201).send(userObj);
     })
     .catch((err) => {
       console.error(err);
@@ -50,7 +52,7 @@ const getCurrentUser = (req, res) => {
     .then((user) => {
       const userObj = user.toObject();
       delete userObj.password;
-      res.status(200).send(userObj);
+      return res.status(200).send(userObj);
     })
     .catch((err) => {
       console.error(err);
@@ -108,7 +110,7 @@ const updateProfile = (req, res) => {
     .then((user) => {
       const userObj = user.toObject();
       delete userObj.password;
-      res.status(200).send(userObj);
+      return res.status(200).send(userObj);
     })
     .catch((err) => {
       console.error(err);

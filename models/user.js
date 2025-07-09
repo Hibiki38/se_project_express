@@ -38,21 +38,20 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-userSchema.pre("save", function (next) {
+userSchema.pre("save", function hashPassword(next) {
   const saltRounds = 10;
   if (this.isModified("password")) {
     return bcrypt
       .hash(this.password, saltRounds)
       .then((hash) => {
         this.password = hash;
-        return next();
+        next();
       })
       .catch((err) => {
-        return next(err);
+        next(err);
       });
-  } else {
-    next();
   }
+  return next();
 });
 
 userSchema.statics.findUserByCredentials = function findUserByCredentials(

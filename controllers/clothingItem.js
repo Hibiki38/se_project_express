@@ -1,5 +1,6 @@
-const ClothingItem = require("../models/clothingItem");
 const mongoose = require("mongoose");
+const ClothingItem = require("../models/clothingItem");
+
 const {
   DEFAULT_ERROR,
   BAD_REQUEST,
@@ -9,7 +10,9 @@ const {
 
 const getItems = (req, res) => {
   ClothingItem.find({})
-    .then((items) => res.status(200).send(items))
+    .then((items) => {
+      return res.status(200).send(items);
+    })
     .catch((err) => {
       console.error(err);
       return res
@@ -21,7 +24,9 @@ const getItems = (req, res) => {
 const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
   ClothingItem.create({ name, weather, imageUrl, owner: req.user.userId })
-    .then((item) => res.status(201).send(item))
+    .then((item) => {
+      return res.status(201).send(item);
+    })
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
@@ -46,7 +51,9 @@ const deleteItem = (req, res) => {
       }
       return ClothingItem.findByIdAndDelete(itemId);
     })
-    .then((item) => res.status(200).send(item))
+    .then((item) => {
+      return res.status(200).send(item);
+    })
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
@@ -80,7 +87,9 @@ const likeItem = (req, res) => {
     { new: true }
   )
     .orFail()
-    .then((item) => res.status(200).send(item))
+    .then((item) => {
+      return res.status(200).send(item);
+    })
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
@@ -111,7 +120,9 @@ const unlikeItem = (req, res) => {
     { new: true }
   )
     .orFail()
-    .then((item) => res.status(200).send(item))
+    .then((item) => {
+      return res.status(200).send(item);
+    })
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
