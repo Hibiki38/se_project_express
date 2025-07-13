@@ -12,9 +12,7 @@ const {
 
 const getUsers = (req, res) => {
   User.find({})
-    .then((users) => {
-      return res.status(200).send(users);
-    })
+    .then((users) => res.status(200).send(users))
     .catch((err) => {
       console.error(err);
       return res

@@ -10,9 +10,7 @@ const {
 
 const getItems = (req, res) => {
   ClothingItem.find({})
-    .then((items) => {
-      return res.status(200).send(items);
-    })
+    .then((items) => res.status(200).send(items))
     .catch((err) => {
       console.error(err);
       return res
@@ -24,9 +22,7 @@ const getItems = (req, res) => {
 const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
   ClothingItem.create({ name, weather, imageUrl, owner: req.user.userId })
-    .then((item) => {
-      return res.status(201).send(item);
-    })
+    .then((item) => res.status(201).send(item))
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
@@ -43,7 +39,7 @@ const deleteItem = (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(itemId)) {
     return res.status(BAD_REQUEST).send({ message: "Invalid item ID" });
   }
-  ClothingItem.findById(itemId)
+  return ClothingItem.findById(itemId)
     .orFail()
     .then((item) => {
       if (item.owner.toString() !== req.user.userId.toString()) {
@@ -51,9 +47,7 @@ const deleteItem = (req, res) => {
       }
       return ClothingItem.findByIdAndDelete(itemId);
     })
-    .then((item) => {
-      return res.status(200).send(item);
-    })
+    .then((item) => res.status(200).send(item))
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
@@ -81,15 +75,13 @@ const likeItem = (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(itemId)) {
     return res.status(BAD_REQUEST).send({ message: "Invalid item ID" });
   }
-  ClothingItem.findByIdAndUpdate(
+  return ClothingItem.findByIdAndUpdate(
     itemId,
     { $addToSet: { likes: req.user.userId } },
     { new: true }
   )
     .orFail()
-    .then((item) => {
-      return res.status(200).send(item);
-    })
+    .then((item) => res.status(200).send(item))
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
@@ -114,15 +106,13 @@ const unlikeItem = (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(itemId)) {
     return res.status(BAD_REQUEST).send({ message: "Invalid item ID" });
   }
-  ClothingItem.findByIdAndUpdate(
+  return ClothingItem.findByIdAndUpdate(
     itemId,
     { $pull: { likes: req.user.userId } },
     { new: true }
   )
     .orFail()
-    .then((item) => {
-      return res.status(200).send(item);
-    })
+    .then((item) => res.status(200).send(item))
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
