@@ -11,8 +11,6 @@ module.exports = (req, res, next) => {
   let token;
   if (authorization && authorization.startsWith("Bearer ")) {
     token = authorization.replace("Bearer ", "");
-  } else if (req.cookies && req.cookies.jwt) {
-    token = req.cookies.jwt;
   } else {
     return handleAuthError(res);
   }

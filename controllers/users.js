@@ -10,17 +10,6 @@ const {
   UNAUTHORIZED,
 } = require("../utils/errors");
 
-const getUsers = (req, res) => {
-  User.find({})
-    .then((users) => res.status(200).send(users))
-    .catch((err) => {
-      console.error(err);
-      return res
-        .status(DEFAULT_ERROR)
-        .send({ message: "An error has occurred on the server" });
-    });
-};
-
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
   User.create({ name, avatar, email, password })
@@ -32,10 +21,14 @@ const createUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: "Invalid data", details: err.message });
       }
       if (err.code === 11000) {
-        return res.status(CONFLICT_ERROR).send({ message: "Duplicate Email" });
+        return res
+          .status(CONFLICT_ERROR)
+          .send({ message: "Duplicate Email", details: err.message });
       }
       return res
         .status(DEFAULT_ERROR)
@@ -55,15 +48,20 @@ const getCurrentUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(NOT_FOUND)
-          .send({ message: "Requested resource not found" });
+        return res.status(NOT_FOUND).send({
+          message: "Requested resource not found",
+          details: err.message,
+        });
       }
       if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: "Invalid data", details: err.message });
       }
       if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: "Invalid data", details: err.message });
       }
       return res
         .status(DEFAULT_ERROR)
@@ -81,15 +79,15 @@ const userLogin = (req, res) => {
       const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
-      res.cookie("jwt", token);
       return res.send({ token });
     })
     .catch((err) => {
       console.error(err);
       if (err.message === "Incorrect email or password") {
-        return res
-          .status(UNAUTHORIZED)
-          .send({ message: "Incorrect email or password" });
+        return res.status(UNAUTHORIZED).send({
+          message: "Incorrect email or password",
+          details: err.message,
+        });
       }
       return res
         .status(DEFAULT_ERROR)
@@ -113,15 +111,20 @@ const updateProfile = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(NOT_FOUND)
-          .send({ message: "Requested resource not found" });
+        return res.status(NOT_FOUND).send({
+          message: "Requested resource not found",
+          details: err.message,
+        });
       }
       if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: "Invalid data", details: err.message });
       }
       if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: "Invalid data", details: err.message });
       }
       return res
         .status(DEFAULT_ERROR)
@@ -130,7 +133,6 @@ const updateProfile = (req, res) => {
 };
 
 module.exports = {
-  getUsers,
   getCurrentUser,
   createUser,
   userLogin,

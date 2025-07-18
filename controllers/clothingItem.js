@@ -26,7 +26,9 @@ const createItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: "Invalid data", details: err.message });
       }
       return res
         .status(DEFAULT_ERROR)
@@ -53,16 +55,25 @@ const deleteItem = (req, res) => {
       if (err.name === "DocumentNotFoundError") {
         return res
           .status(NOT_FOUND)
-          .send({ message: "Requested resource not found" });
+          .send({
+            message: "Requested resource not found",
+            details: err.message,
+          });
       }
       if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: "Invalid data", details: err.message });
       }
       if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: "Invalid data", details: err.message });
       }
       if (err.message === "Permission denied") {
-        return res.status(NO_PERMISSION).send({ message: "Permission denied" });
+        return res
+          .status(NO_PERMISSION)
+          .send({ message: "Permission denied", details: err.message });
       }
       return res
         .status(DEFAULT_ERROR)
@@ -87,13 +98,20 @@ const likeItem = (req, res) => {
       if (err.name === "DocumentNotFoundError") {
         return res
           .status(NOT_FOUND)
-          .send({ message: "Requested resource not found" });
+          .send({
+            message: "Requested resource not found",
+            details: err.message,
+          });
       }
       if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: "Invalid data", details: err.message });
       }
       if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: "Invalid data", details: err.message });
       }
       return res
         .status(DEFAULT_ERROR)
@@ -118,13 +136,20 @@ const unlikeItem = (req, res) => {
       if (err.name === "DocumentNotFoundError") {
         return res
           .status(NOT_FOUND)
-          .send({ message: "Requested resource not found" });
+          .send({
+            message: "Requested resource not found",
+            details: err.message,
+          });
       }
       if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: "Invalid data", details: err.message });
       }
       if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: "Invalid data", details: err.message });
       }
       return res
         .status(DEFAULT_ERROR)
