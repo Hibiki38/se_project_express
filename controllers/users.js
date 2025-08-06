@@ -14,9 +14,12 @@ const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
   User.create({ name, avatar, email, password })
     .then((user) => {
+      const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
+        expiresIn: "7d",
+      });
       const userObj = user.toObject();
       delete userObj.password;
-      return res.status(201).send(userObj);
+      return res.status(201).send({ token, userObj });
     })
     .catch((err) => {
       console.error(err);
