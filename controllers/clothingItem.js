@@ -1,5 +1,8 @@
 const mongoose = require("mongoose");
 const ClothingItem = require("../models/clothingItem");
+const BadRequestError = require("../errors/bad-request-err");
+const NotFoundError = require("../errors/not-found-err");
+const ForbiddenError = require("../errors/forbidden-Error");
 
 const {
   DEFAULT_ERROR,
@@ -8,38 +11,31 @@ const {
   NO_PERMISSION,
 } = require("../utils/errors");
 
-const getItems = (req, res) => {
+const getItems = (req, res, next) => {
   ClothingItem.find({})
     .then((items) => res.status(200).send(items))
     .catch((err) => {
-      console.error(err);
-      return res
-        .status(DEFAULT_ERROR)
-        .send({ message: "An error has occurred on the server" });
+      return next(err);
     });
 };
 
-const createItem = (req, res) => {
+const createItem = (req, res, next) => {
   const { name, weather, imageUrl } = req.body;
   ClothingItem.create({ name, weather, imageUrl, owner: req.user.userId })
     .then((item) => res.status(201).send(item))
     .catch((err) => {
-      console.error(err);
       if (err.name === "ValidationError") {
-        return res
-          .status(BAD_REQUEST)
-          .send({ message: "Invalid data", details: err.message });
+        return next(new BadRequestError("Invalid data"));
       }
-      return res
-        .status(DEFAULT_ERROR)
-        .send({ message: "An error has occurred on the server" });
+      return next(err);
     });
 };
 
-const deleteItem = (req, res) => {
+const deleteItem = (req, res, next) => {
   const { itemId } = req.params;
   if (!mongoose.Types.ObjectId.isValid(itemId)) {
-    return res.status(BAD_REQUEST).send({ message: "Invalid item ID" });
+    next(new BadRequestError("Invalid item ID"));
+    return;
   }
   return ClothingItem.findById(itemId)
     .orFail()
@@ -51,40 +47,27 @@ const deleteItem = (req, res) => {
     })
     .then((item) => res.status(200).send(item))
     .catch((err) => {
-      console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(NOT_FOUND)
-          .send({
-            message: "Requested resource not found",
-            details: err.message,
-          });
+        return next(new NotFoundError("Requested resource not found"));
       }
       if (err.name === "CastError") {
-        return res
-          .status(BAD_REQUEST)
-          .send({ message: "Invalid data", details: err.message });
+        return next(new BadRequestError("Inavlid data"));
       }
       if (err.name === "ValidationError") {
-        return res
-          .status(BAD_REQUEST)
-          .send({ message: "Invalid data", details: err.message });
+        return next(new BadRequestError("Inavlid data"));
       }
       if (err.message === "Permission denied") {
-        return res
-          .status(NO_PERMISSION)
-          .send({ message: "Permission denied", details: err.message });
+        return next(new ForbiddenError("Permission Error"));
       }
-      return res
-        .status(DEFAULT_ERROR)
-        .send({ message: "An error has occurred on the server" });
+      return next(err);
     });
 };
 
 const likeItem = (req, res) => {
   const { itemId } = req.params;
   if (!mongoose.Types.ObjectId.isValid(itemId)) {
-    return res.status(BAD_REQUEST).send({ message: "Invalid item ID" });
+    next(new BadRequestError("Invalid item ID"));
+    return;
   }
   return ClothingItem.findByIdAndUpdate(
     itemId,
@@ -96,33 +79,23 @@ const likeItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(NOT_FOUND)
-          .send({
-            message: "Requested resource not found",
-            details: err.message,
-          });
+        return next(new NotFoundError("Requested resource not found"));
       }
       if (err.name === "CastError") {
-        return res
-          .status(BAD_REQUEST)
-          .send({ message: "Invalid data", details: err.message });
+        return next(new BadRequestError("Inavlid data"));
       }
       if (err.name === "ValidationError") {
-        return res
-          .status(BAD_REQUEST)
-          .send({ message: "Invalid data", details: err.message });
+        return next(new BadRequestError("Inavlid data"));
       }
-      return res
-        .status(DEFAULT_ERROR)
-        .send({ message: "An error has occurred on the server" });
+      return next(err);
     });
 };
 
 const unlikeItem = (req, res) => {
   const { itemId } = req.params;
   if (!mongoose.Types.ObjectId.isValid(itemId)) {
-    return res.status(BAD_REQUEST).send({ message: "Invalid item ID" });
+    next(new BadRequestError("Invalid item ID"));
+    return;
   }
   return ClothingItem.findByIdAndUpdate(
     itemId,
@@ -134,26 +107,15 @@ const unlikeItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(NOT_FOUND)
-          .send({
-            message: "Requested resource not found",
-            details: err.message,
-          });
+        return next(new NotFoundError("Requested resource not found"));
       }
       if (err.name === "CastError") {
-        return res
-          .status(BAD_REQUEST)
-          .send({ message: "Invalid data", details: err.message });
+        return next(new BadRequestError("Inavlid data"));
       }
       if (err.name === "ValidationError") {
-        return res
-          .status(BAD_REQUEST)
-          .send({ message: "Invalid data", details: err.message });
+        return next(new BadRequestError("Inavlid data"));
       }
-      return res
-        .status(DEFAULT_ERROR)
-        .send({ message: "An error has occurred on the server" });
+      return next(err);
     });
 };
 
