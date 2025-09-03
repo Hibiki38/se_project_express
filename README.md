@@ -8,4 +8,7 @@ This is the back end part of the WTWR project, using MongoDB, Postman, mongoose,
 
 `npm run dev` — to launch the server with the hot reload feature
 
+**Domain:** https://wtwow.jumpingcrab.com
+
+**Frontend Repository:** https://github.com/Hibiki38/se_project_react
 Before committing your code, make sure you edit the file `sprint.txt` in the root folder. The file `sprint.txt` should contain the number of the sprint you're currently working on. For ex. 13
