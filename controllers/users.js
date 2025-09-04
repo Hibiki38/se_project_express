@@ -6,14 +6,6 @@ const ConflictError = require("../errors/conflict-err");
 const NotFoundError = require("../errors/not-found-err");
 const UnauthorizedError = require("../errors/unauthorized-err");
 
-const {
-  DEFAULT_ERROR,
-  BAD_REQUEST,
-  NOT_FOUND,
-  CONFLICT_ERROR,
-  UNAUTHORIZED,
-} = require("../utils/errors");
-
 const createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
   User.create({ name, avatar, email, password })
@@ -62,7 +54,6 @@ const userLogin = (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
     next(new BadRequestError("Invalid data"));
-    return;
   }
   return User.findUserByCredentials(email, password)
     .then((user) => {

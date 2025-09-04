@@ -4,19 +4,10 @@ const BadRequestError = require("../errors/bad-request-err");
 const NotFoundError = require("../errors/not-found-err");
 const ForbiddenError = require("../errors/forbidden-Error");
 
-const {
-  DEFAULT_ERROR,
-  BAD_REQUEST,
-  NOT_FOUND,
-  NO_PERMISSION,
-} = require("../utils/errors");
-
 const getItems = (req, res, next) => {
   ClothingItem.find({})
     .then((items) => res.status(200).send(items))
-    .catch((err) => {
-      return next(err);
-    });
+    .catch((err) => next(err));
 };
 
 const createItem = (req, res, next) => {
@@ -35,7 +26,6 @@ const deleteItem = (req, res, next) => {
   const { itemId } = req.params;
   if (!mongoose.Types.ObjectId.isValid(itemId)) {
     next(new BadRequestError("Invalid item ID"));
-    return;
   }
   return ClothingItem.findById(itemId)
     .orFail()
@@ -63,11 +53,10 @@ const deleteItem = (req, res, next) => {
     });
 };
 
-const likeItem = (req, res) => {
+const likeItem = (req, res, next) => {
   const { itemId } = req.params;
   if (!mongoose.Types.ObjectId.isValid(itemId)) {
     next(new BadRequestError("Invalid item ID"));
-    return;
   }
   return ClothingItem.findByIdAndUpdate(
     itemId,
@@ -91,11 +80,10 @@ const likeItem = (req, res) => {
     });
 };
 
-const unlikeItem = (req, res) => {
+const unlikeItem = (req, res, next) => {
   const { itemId } = req.params;
   if (!mongoose.Types.ObjectId.isValid(itemId)) {
     next(new BadRequestError("Invalid item ID"));
-    return;
   }
   return ClothingItem.findByIdAndUpdate(
     itemId,

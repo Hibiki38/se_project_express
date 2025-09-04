@@ -12,6 +12,7 @@ module.exports.validateCardBody = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
     imageUrl: Joi.string().required().custom(validateURL),
+    weather: Joi.string().valid("hot", "warm", "cold").required(),
   }),
 });
 
@@ -32,10 +33,14 @@ module.exports.validateAuthentication = celebrate({
 });
 
 module.exports.validateId = celebrate({
-  params: Joi.object()
-    .keys({
-      userId: Joi.string().hex().length(24),
-      itemId: Joi.string().hex().length(24),
-    })
-    .or("userId", "itemId"),
+  params: Joi.object().keys({
+    itemId: Joi.string().hex().length(24),
+  }),
+});
+
+module.exports.validateUserUpdate = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().min(2).max(30).required(),
+    avatar: Joi.string().uri().required(),
+  }),
 });
