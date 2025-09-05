@@ -8,8 +8,8 @@ const NotFoundError = require("../errors/not-found-err");
 
 router.use("/users", userRouter);
 router.use("/items", itemRouter);
-router.post("/signin", userLogin, validateCardBody);
-router.post("/signup", createUser, validateCardBody);
+router.post("/signin", validateCardBody, userLogin);
+router.post("/signup", validateCardBody, createUser);
 router.use((req, res, next) => next(new NotFoundError("Resource Not Found")));
 
 module.exports = router;
