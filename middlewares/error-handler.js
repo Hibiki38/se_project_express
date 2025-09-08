@@ -1,5 +1,4 @@
 const errorHandler = (err, req, res, next) => {
-  // eslint-disable-next-line no-console
   console.error(err);
 
   return res
